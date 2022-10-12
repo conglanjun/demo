@@ -2,8 +2,12 @@ package com.example
 
 import com.example.bean.*
 import io.micronaut.context.BeanContext
+import io.micronaut.context.exceptions.NoSuchBeanException
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
+import jakarta.inject.Inject
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertThrows
 
 @MicronautTest
 class EngineTest {
@@ -44,6 +48,24 @@ class EngineTest {
         println("----------")
         val bean1 = context.getBean(VehicleAny::class.java)
         bean1.start()
+    }
+
+    @Inject
+    lateinit var beanContext: BeanContext
+
+    @Test
+    fun testLimitEngine() {
+//        val el = beanContext.getBean(V8LimitEngine::class.java)
+        assertThrows(NoSuchBeanException::class.java) {
+            val el = beanContext.getBean(V8LimitEngine::class.java)
+            println("--------1")
+            println(el)
+            println(beanContext.getBean(V8LimitEngine::class.java))
+        }
+        val engine = beanContext.getBean(EngineLimit::class.java)
+        println("--------2")
+        println(engine)
+        assertTrue(engine is V8LimitEngine)
     }
 
 }

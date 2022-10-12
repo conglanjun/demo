@@ -49,8 +49,8 @@ interface ColorPicker {
     fun color(): String
 }
 
-//@Primary
-@Secondary
+@Primary
+//@Secondary
 @Singleton
 class Green : ColorPicker {
     override fun color(): String {

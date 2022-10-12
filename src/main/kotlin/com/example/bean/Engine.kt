@@ -2,6 +2,7 @@ package com.example.bean
 
 import com.example.annotations.Cylinders
 import io.micronaut.context.annotation.Any
+import io.micronaut.context.annotation.Bean
 import jakarta.inject.Inject
 import jakarta.inject.Named
 import jakarta.inject.Singleton
@@ -122,5 +123,22 @@ class V2AnyEngine : EngineAny {
 
     override fun start(): String {
         return "starting v2"
+    }
+}
+
+// limit
+interface EngineLimit {
+
+    val cylinders: Int
+    fun start(): String
+
+}
+
+@Singleton
+@Bean(typed = [EngineLimit::class])
+class V8LimitEngine : EngineLimit {
+    override val cylinders: Int = 8
+    override fun start(): String {
+        return "starting v8 limit engine"
     }
 }
