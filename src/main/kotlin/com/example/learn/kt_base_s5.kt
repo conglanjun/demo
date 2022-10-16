@@ -1,192 +1,86 @@
 package com.example.learn
 
-import java.io.File
-
 open class Person(private val name: String) {
-    fun showName() = "person name is $name"
+    private fun showName() = "person name is $name"
     open fun myPrintln() = println(showName())
-    fun mp() = println("I'm father")
 }
 
 class Student(private val subName: String) : Person(subName) {
     override fun myPrintln() = println("sub class name is $subName")
-    fun ms() = println("I'm child")
 }
 
-object KtBase87 {
-    init {
-        println("init 87")
-    }
+open class MyAnyClass(name: String)
+open class PersonClass(name: String) : MyAnyClass(name)
+class StudentClass(name: String) : PersonClass(name)
+class TeacherClass(name: String) : PersonClass(name)
+class DogClass(name: String)
 
-    fun show() = println("I'm show function!")
-}
+class KtBase106<T : PersonClass>(val inputTypeValue: T, private val isR: Boolean = true) {
 
-open class KtBase88 {
-    open fun add(info: String) = println("KtBase88 add:$info")
-    open fun del(info: String) = println("KtBase88 del:$info")
-}
-
-class KtBase89 {
-    companion object {
-        val info = "LayneInfo"
-        fun showInfo() = println("show:$info")
-    }
+    fun getObj(): T? = inputTypeValue.takeIf { isR }
 
 }
 
-class Body(_bodyInfo: String) {
-    val bodyInfo = _bodyInfo
-    fun show() = {
-        Heart().run()
-    }
-
-    companion object {
-        val body1 = "body11"
-    }
-
-    inner class Heart {
-        val hear1 = "h1"
-        fun run() = println("heart inner class:$body1, $bodyInfo")
-    }
-
-    inner class Kidney {
-        fun work() = println("kidney inner class:$bodyInfo")
-    }
-
-    inner class Hand {
-        inner class LeftHand {
-            fun run() = println("left hand info:$bodyInfo")
-        }
-
-        inner class RightHand {
-            fun run() = println("right hand info:$bodyInfo")
-        }
-    }
+class KtBase107<T>(vararg objects: T, var isMap: Boolean) {
+    val objectArray: Array<out T> = objects
+    fun showObj(): Array<out T>? = objectArray.takeIf { isMap }
+    fun showObj(index: Int): T? = objectArray[index].takeIf { isMap } ?: null
+    fun <O> mapObj(index: Int, mapAction: (T?) -> O): O? = mapAction(objectArray[index].takeIf { isMap })
 }
 
-data class KtBase92(var name: String, var age: Int) {
-    var coreInfo: String = ""
-
-    init {
-        println("main constructor is invoked!")
-    }
-
-    // secondary constructor
-    constructor(name: String) : this(name, 99) {
-        println("secondary constructor")
-        coreInfo = "add core info"
-    }
-
-    override fun toString(): String {
-        return "toString name:$name, age:$age, coreInfo:$coreInfo"
-    }
+fun <I> inputObj(item: I) {
+    println((item as String?)?.length ?: "is null!!!")
 }
 
-class Student1(var name: String, var age: Int, var sex: Char) {
-    operator fun component1() = name
-    operator fun component2() = age
-    operator fun component3() = sex
-}
-
-data class Student2(var name: String, var age: Int, var sex: Char)
-
-data class AddClass(var number1: Int, var number2: Int) {
-    operator fun plus(p1: AddClass): AddClass {
-        return AddClass(number1 + p1.number1, number2 + p1.number2)
-    }
-}
-
-enum class Week {
-    Monday,
-    Tuesday,
-    Wednesday,
-    Thursday,
-    Friday,
-    Saturday,
-    Sunday
-}
-
-data class LimbsInfo(var limbsInfo: String, var length:Int){
-    fun show(){
-        println("${limbsInfo}'s length is :$length")
-    }
-}
-
-enum class Limbs(private val limbsInfo: LimbsInfo){
-    LEFT_HAND(LimbsInfo("left hand", 88)),
-    RIGHT_HAND(LimbsInfo("right hand", 89)),
-    LEFT_FOOT(LimbsInfo("left foot", 100)),
-    RIGHT_FOOT(LimbsInfo("right foot", 101));
-
-    fun show() = "limbs are:${limbsInfo.limbsInfo}, length is:${limbsInfo.length}"
-
-    fun updateData(limbsInfo: LimbsInfo){
-        this.limbsInfo.limbsInfo = limbsInfo.limbsInfo
-        this.limbsInfo.length=limbsInfo.length
-        println("updated data is:${this.limbsInfo}")
-    }
+class KtBase108<I>(vararg objects: I, val isR: Boolean = true) {
+    val objectArray:Array<out I> = objects
+    operator fun get(index:Int):I? = objectArray[index].takeIf { isR }
 }
 
 fun main() {
     val person: Person = Student("Layne good")
     person.myPrintln()
-    println(person is Person)
-    println(person is File)
+    println("----------106")
+    val any = MyAnyClass("Layne1")
+    val per = PersonClass("Layne1")
+    val stu = StudentClass("Layne1")
+    val tea = TeacherClass("Layne1")
+    val dog = DogClass("xiaoming")
 
-    if (person is Student) {
-        (person as Student).myPrintln()
+//    val r1 = KtBase106(any as PersonClass).getObj()
+//    println(r1)
+    val r2 = KtBase106(per).getObj()
+    println(r2)
+    val r3 = KtBase106(stu).getObj()
+    println(r3)
+    val r4 = KtBase106(tea).getObj()
+    println(r4)
+//    val r5 = KtBase106(dog).getObj()
+//    println(r5)
+
+    val p: KtBase107<Any?> = KtBase107("Layne", false, 345, 345.5f, 345.56, null, 'C', isMap = true)
+    println(p)
+    println(p.showObj(0))
+    println(p.showObj(1))
+    println(p.showObj(2))
+    println(p.showObj(3))
+    println(p.showObj(4))
+    println(p.showObj(5))
+    println(p.showObj(6))
+//    println(p.showObj(7))
+    var r11: Int? = p.mapObj(0) {
+        it.toString().length
     }
-
-    if (person is Person) {
-        println((person as Person).showName())
+    var r12: String? = p.mapObj(2) {
+        "result is thrid item:${it}"
     }
-    (person as Student)
-    person.ms()
-    if (person is Student) {
-        person.ms()
-    }
+    println(r11)
+    println(r12)
+    inputObj("Layne")
+    inputObj("KKK")
+    inputObj(null)
 
-    println(KtBase87)
-    println(KtBase87)
-    KtBase87.show()
-    println("-----------88")
-    val p: KtBase88 = object : KtBase88() {
-        override fun add(info: String) {
-//            super.add(info)
-            println("no name object add:$info")
-        }
-
-        override fun del(info: String) {
-//            super.del(info)
-            println("no name object del:$info")
-        }
-    }
-    p.add("hello")
-    p.del("hh")
-    object : Runnable {
-        override fun run() {
-            println(1)
-        }
-
-    }.run()
-
-    println(KtBase89.info)
-    KtBase89.showInfo()
-
-    println("--------92")
-    val p92 = KtBase92("Layne")
-    println(p92)
-
-    println("--------93")
-    val (name1, age1, sex1) = Student1("Layne", 36, 'M')
-    println("common class name:$name1, age:$age1, sex:$sex1")
-    val (name2, age2, sex2) = Student2("Layne", 36, 'M')
-    println("common class name:$name2, age:$age2, sex:$sex2")
-
-    println("--------94")
-    println(AddClass(1, 1) + AddClass(2, 2))
-    println("--------95")
-    println(Week.Monday)
-    println(Limbs.LEFT_FOOT.show())
-    Limbs.RIGHT_HAND.updateData(LimbsInfo("right hand 2", 111))
+    val p1: KtBase108<String?> = KtBase108("zhangsan", "lisi", "wangwu", null)
+    println(p1[0])
+    println(p1[1])
 }
