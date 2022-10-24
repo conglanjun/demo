@@ -33,10 +33,51 @@ fun <I> inputObj(item: I) {
 }
 
 class KtBase108<I>(vararg objects: I, val isR: Boolean = true) {
-    val objectArray:Array<out I> = objects
-    operator fun get(index:Int):I? = objectArray[index].takeIf { isR }
+    val objectArray: Array<out I> = objects
+    operator fun get(index: Int): I? = objectArray[index].takeIf { isR }
 }
 
+data class ObjectClass1(val name: String, val age: Int, val study: String)
+data class ObjectClass2(val name: String, val age: Int, val study: String)
+data class ObjectClass3(val name: String, val age: Int, val study: String)
+
+class KtBase112 {
+    inline fun <reified T> randomOrDefault(defaultLambdaAction: () -> T): T? {
+        val objList: List<Any> = listOf(
+            ObjectClass1("lisi", 22, "learn c"),
+            ObjectClass2("wangwu", 23, "learn c++"),
+            ObjectClass3("zhaoliu", 19, "learnC#")
+        )
+
+        val randomObject: Any = objList.shuffled().first()
+        return (randomObject.takeIf { it is T } ?: defaultLambdaAction()) as T
+    }
+}
+
+class KtBase113(val name: String, val age: Int, val sex: Char)
+
+fun KtBase113.show() {
+    println("I'm show function, name:$name, age:$age, sex:$sex")
+}
+
+fun String.addExtAction(number: Int) = this + "@".repeat(number)
+
+fun <T> T.showContentInfo() =
+    println("${if (this is String) "your string length is:$length" else "your string content is:$this"}")
+
+fun <I> I.showTypesAction() =
+    when (this) {
+        is String -> "it's String"
+        is Int -> "It's int"
+        is Char -> "It's Char"
+        is Float -> "It's Float"
+        is Boolean -> "It's boolean"
+        is Unit -> "It's Unit"
+        else -> "Unknown type"
+    }
+
+fun commonFun() {}
+fun commonFun1(): String = ""
 fun main() {
     val person: Person = Student("Layne good")
     person.myPrintln()
@@ -83,4 +124,28 @@ fun main() {
     val p1: KtBase108<String?> = KtBase108("zhangsan", "lisi", "wangwu", null)
     println(p1[0])
     println(p1[1])
+
+    println("--------------")
+    val listOf = listOf<Int>(123, 4355, 66)
+    listOf.forEach {
+        println(it)
+    }
+
+    println("----------112")
+    val finalResult = KtBase112().randomOrDefault<ObjectClass1> {
+        println("random product obj and input is different!")
+        ObjectClass1("obj111", 23, "learn c")
+    }
+    println("client result:$finalResult")
+
+    println("Layne".addExtAction(8))
+
+    123.showContentInfo()
+    "Layne".showContentInfo()
+    commonFun().showContentInfo()
+
+    println(234.showTypesAction())
+    println('C'.showTypesAction())
+    println(commonFun().showTypesAction())
+    println(commonFun1().showTypesAction())
 }
