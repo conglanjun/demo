@@ -28,6 +28,28 @@ inline fun Context.apply5(lambda: Context.(String) -> Unit): Context {
     return this
 }
 
+class RxJavaCoreClassObject<T>(var valueItem: T) {
+    init {
+        println("---------init begin")
+        println(this)
+        println(valueItem)
+        println("---------init over")
+    }
+}
+
+inline fun <OUTPUT> create(action: () -> OUTPUT) = RxJavaCoreClassObject(action())
+
+inline fun <I> RxJavaCoreClassObject<I>.observer(action: I.() -> Unit) {
+    println("map, observer:$this")
+    action(valueItem)
+}
+
+inline fun <I, O> RxJavaCoreClassObject<I>.map(mapAction: I.() -> O): RxJavaCoreClassObject<O> {
+    println("map, this:$this")
+    val r:RxJavaCoreClassObject<O> = RxJavaCoreClassObject(mapAction(valueItem))
+    return r
+}
+
 fun main() {
     val r: String = "Layne".mLet {
         true
@@ -48,7 +70,7 @@ fun main() {
 //    set1.randomItemValuePrintln()
     list1.pl()
     set1.pl()
-    val r1: File = File("/Users/advance/.zshrc").mApply {
+    val r1: File = File("/Users/conglanjun/.zshrc").mApply {
         setReadable(true)
         println("111 ${readLines()}")
     }
@@ -106,8 +128,23 @@ fun main() {
     println(zip)
     println(zip.toMap())
 
-    zip.forEach{
+    zip.forEach {
         println("name is:${it.first}, age is:${it.second}")
     }
 
+    println("-------136")
+    create {
+        "Layne"
+        true
+        123
+//        "AAAAA"
+    }.map {
+        "your value is $this"
+    }.map {
+        "[$this]"
+    }.map {
+        "@@$this@@"
+    }.observer{
+        println(this)
+    }
 }
